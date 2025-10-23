@@ -30,14 +30,14 @@ jobs:
             git clone https://github.com/IsuruMDasanayake/test.git
             cd test
 
-            echo '--- Building and starting Docker containers ---'
-            docker compose up --build -d
+            echo "--- Building and starting Docker containers ---"
+            docker-compose up --build -d
 
-            echo '--- Sleeping 15 seconds for test ---'
-            sleep 15
+            echo "--- Sleeping 15 minutes for test ---"
+            sleep 900
 
-            echo '--- Stopping Docker containers ---'
-            docker compose down
+            echo "--- Stopping Docker containers ---"
+            docker-compose down
 
             echo '--- Cleaning up ---'
             cd /opt
