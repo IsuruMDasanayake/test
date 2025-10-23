@@ -1,14 +1,15 @@
 name: Test Docker on Server
 
 on:
-  workflow_dispatch:  # manually triggered
+  workflow_dispatch:  # manually trigger
 
 jobs:
   test-docker:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout this repo (not strictly required)
+      # Checkout is optional here, but keeps the repo context
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup SSH
@@ -18,28 +19,31 @@ jobs:
 
       - name: Run Docker Test on Server
         run: |
-          ssh -o StrictHostKeyChecking=no root@152.42.249.28 "
+          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 root@152.42.249.28 "
             echo '--- Starting GitHub Action Test ---'
 
-            # Clean previous test directory if exists
+            # Remove previous test directory and create a new one
             rm -rf /opt/test-gha
             mkdir -p /opt/test-gha
             cd /opt/test-gha
 
-            # Clone the test repository
+            # Clone your test repo
             git clone https://github.com/IsuruMDasanayake/test.git
             cd test
 
-            echo "--- Building and starting Docker containers ---"
+            # Build and start Docker containers
+            echo '--- Building and starting Docker containers ---'
             docker-compose up --build -d
 
-            echo "--- Sleeping 15 minutes for test ---"
+            # Sleep 15 minutes (900 seconds) with keep-alive
+            echo '--- Sleeping 15 minutes for test ---'
             sleep 900
 
-            echo "--- Stopping Docker containers ---"
+            # Stop Docker containers
+            echo '--- Stopping Docker containers ---'
             docker-compose down
 
-            echo '--- Cleaning up ---'
+            # Cleanup
             cd /opt
             rm -rf /opt/test-gha
 
